@@ -14,4 +14,13 @@
         android:layout_centerHorizontal="true"
         android:onClick="StartService"
         android:layout_marginTop="120dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Plot"
+        android:id="@+id/buttonPlot"
+        android:onClick="plotMapForObtainedPoints"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
 </RelativeLayout>

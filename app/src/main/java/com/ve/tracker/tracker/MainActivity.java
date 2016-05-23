@@ -5,36 +5,57 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.location.Location;
 import android.location.LocationManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.ve.tracker.tracker.Helper.StaticHelper;
 import com.ve.tracker.tracker.Service.TrackerService;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
 
     BroadcastReceiver receiver;
+
+    Button serviceControl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        serviceControl = (Button) findViewById(R.id.buttonStartService);
+
         receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 String s = intent.getStringExtra(StaticHelper.UPDATE_UI_MESSAGE);
                 Toast.makeText(context, s, Toast.LENGTH_LONG).show();
+                Double lattitude = intent.getDoubleExtra(StaticHelper.LATTITUBE_LOCATION_OBTAINED, 0.0);
+                if(lattitude != 0.0){
+                    Double longitude = intent.getDoubleExtra(StaticHelper.LONGITUDE_LOCATION_OBTAINED, 0.0);
+                    LocationPointModel newPoint = new LocationPointModel();
+                    newPoint.location = new Location("");
+                    newPoint.location.setLatitude(lattitude);
+                    newPoint.location.setLongitude(longitude);
+                    newPoint.dateTimeStamp = new Date();
+
+                    StaticHelper.pointsRecorded.add(newPoint);
+                }
             }
         };
-
 
         final LocationManager manager = (LocationManager) getSystemService( Context.LOCATION_SERVICE );
 
@@ -99,6 +120,22 @@ public class MainActivity extends AppCompatActivity {
 
     public void StartService(View view) {
         Intent intent = new Intent(this, TrackerService.class);
-        startService(intent);
+        if(!StaticHelper.IsServiceRunning) {
+            Log.d("TRACKERSERVICE", "Service is not runnning.");
+            startService(intent);
+            serviceControl.setText("Stop");
+            StaticHelper.pointsRecorded = new ArrayList<>();
+        }else{
+            Log.d("TRACKERSERVICE", "Service is runnning.");
+            stopService(intent);
+            serviceControl.setText("Begin");
+        }
+    }
+
+    public void plotMapForObtainedPoints(View view) {
+        if(StaticHelper.pointsRecorded.size() > 0){
+            Intent intent = new Intent(this, MapsActivity.class);
+            startActivity(intent);
+        }
     }
 }

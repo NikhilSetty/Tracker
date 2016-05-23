@@ -79,6 +79,7 @@ public class TrackerService extends Service {
             }
         };
         WorkerThread.start();
+        StaticHelper.IsServiceRunning = true;
         return START_STICKY;
     }
 
@@ -127,13 +128,17 @@ public class TrackerService extends Service {
         boolean isFromSameProvider = isSameProvider(location.getProvider(),
                 currentBestLocation.getProvider());
 
+        boolean isDistanceGreaterThanTwoMeters = location.distanceTo(currentBestLocation) > 2;
+
         // Determine location quality using a combination of timeliness and accuracy
-        if (isMoreAccurate) {
-            return true;
-        } else if (isNewer && !isLessAccurate) {
-            return true;
-        } else if (isNewer && !isSignificantlyLessAccurate && isFromSameProvider) {
-            return true;
+        if(isDistanceGreaterThanTwoMeters) {
+            if (isMoreAccurate) {
+                return true;
+            } else if (isNewer && !isLessAccurate) {
+                return true;
+            } else if (isNewer && !isSignificantlyLessAccurate && isFromSameProvider) {
+                return true;
+            }
         }
         return false;
     }
@@ -150,26 +155,12 @@ public class TrackerService extends Service {
     public void onDestroy() {
         // handler.removeCallbacks(sendUpdatesToUI);
         super.onDestroy();
-        Log.v("STOP_SERVICE", "DONE");
+        Log.v("TRACKERSERVICE", "DONE");
         try {
             locationManager.removeUpdates(listener);
         }catch (SecurityException e){
         }
-    }
-
-    public static Thread performOnBackgroundThread(final Runnable runnable) {
-        final Thread t = new Thread() {
-            @Override
-            public void run() {
-                try {
-                    runnable.run();
-                } finally {
-
-                }
-            }
-        };
-        t.start();
-        return t;
+        StaticHelper.IsServiceRunning = false;
     }
 
     public class MyLocationListener implements LocationListener
@@ -187,16 +178,21 @@ public class TrackerService extends Service {
                 sendBroadcast(intent);
 
                 Log.d("TRACKERSERVICE", loc.getLatitude() + ", " + loc.getLongitude());
-                sendResult("Location obtained : " + loc.getLatitude() + ", " + loc.getLongitude());
+                sendResult("Location obtained : " + loc.getLatitude() + ", " + loc.getLongitude(), loc);
             }else{
-                sendResult("Location was not obtained.");
+                sendResult("Location was not obtained.", null);
             }
         }
 
-        public void sendResult(String message) {
+        public void sendResult(String message, Location loc) {
             Intent intent = new Intent(StaticHelper.UPDATE_UI);
-            if(message != null)
+            if(message != null) {
                 intent.putExtra(StaticHelper.UPDATE_UI_MESSAGE, message);
+                if(loc != null) {
+                    intent.putExtra(StaticHelper.LATTITUBE_LOCATION_OBTAINED, loc.getLatitude());
+                    intent.putExtra(StaticHelper.LONGITUDE_LOCATION_OBTAINED, loc.getLongitude());
+                }
+            }
             broadcaster.sendBroadcast(intent);
         }
 
