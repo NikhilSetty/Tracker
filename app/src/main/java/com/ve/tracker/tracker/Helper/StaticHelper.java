@@ -1,6 +1,6 @@
 package com.ve.tracker.tracker.Helper;
 
-import com.ve.tracker.tracker.LocationPointModel;
+import com.ve.tracker.tracker.Models.LocationPointModel;
 
 import java.util.ArrayList;
 import java.util.List;

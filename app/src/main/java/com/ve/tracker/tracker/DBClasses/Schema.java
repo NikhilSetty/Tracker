@@ -13,6 +13,10 @@ public class Schema {
             + DbTableStrings.USERID + " string, "
             + DbTableStrings.LOCATION + " string, ";
 
+    public static final String CREATE_TABLE_CUSTOM_SETTINGS = "create table if not exists " + DbTableStrings.TABLE_NAME_CUSTOM_SETTINGS +
+            "( _id integer primary key autoincrement, "
+            + DbTableStrings.KEY + " string, "
+            + DbTableStrings.VALUE + " string, ";
 }
 
 

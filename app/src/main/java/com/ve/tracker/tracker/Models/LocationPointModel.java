@@ -1,4 +1,4 @@
-package com.ve.tracker.tracker;
+package com.ve.tracker.tracker.Models;
 
 import android.location.Location;
 

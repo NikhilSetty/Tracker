@@ -60,14 +60,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             locationUtility.showSettingsAlert(MapsActivity.this);
         }
 
-        PlotAllThePointsWithData();
-    }
-
-    private void PlotAllThePointsWithData() {
         try{
-            if(line != null){
-                mMap.clear();
-            }
 
             if(StaticHelper.pointsRecorded.size() > 0){
                 for(int i = 0; i < StaticHelper.pointsRecorded.size(); i++) {

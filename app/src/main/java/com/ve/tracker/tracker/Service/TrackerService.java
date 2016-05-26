@@ -16,6 +16,9 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.ve.tracker.tracker.Helper.StaticHelper;
+import com.ve.tracker.tracker.Models.LocationPointModel;
+
+import java.util.Date;
 
 public class TrackerService extends Service {
 
@@ -191,6 +194,14 @@ public class TrackerService extends Service {
                 if(loc != null) {
                     intent.putExtra(StaticHelper.LATTITUBE_LOCATION_OBTAINED, loc.getLatitude());
                     intent.putExtra(StaticHelper.LONGITUDE_LOCATION_OBTAINED, loc.getLongitude());
+
+                    LocationPointModel newPoint = new LocationPointModel();
+                    newPoint.location = new Location("");
+                    newPoint.location.setLatitude(loc.getLatitude());
+                    newPoint.location.setLongitude(loc.getLongitude());
+                    newPoint.dateTimeStamp = new Date();
+
+                    StaticHelper.pointsRecorded.add(newPoint);
                 }
             }
             broadcaster.sendBroadcast(intent);

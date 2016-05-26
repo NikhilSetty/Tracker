@@ -36,7 +36,6 @@ public class TrackerProvider extends ContentProvider {
     }
 
     @Override
-
     public boolean onCreate() {
         dbHelper = new DbHelper(getContext().getApplicationContext());
         return false;
@@ -61,7 +60,6 @@ public class TrackerProvider extends ContentProvider {
         }
 
         cursor.setNotificationUri(getContext().getContentResolver(),uri);
-
 
         return cursor;
     }
