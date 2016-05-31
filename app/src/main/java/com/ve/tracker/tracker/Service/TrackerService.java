@@ -15,7 +15,9 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.ve.tracker.tracker.DBClasses.DbHandler.CustomSettingsDbHandler;
 import com.ve.tracker.tracker.Helper.StaticHelper;
+import com.ve.tracker.tracker.Models.CustomSettingsModel;
 import com.ve.tracker.tracker.Models.LocationPointModel;
 
 import java.util.Date;
@@ -58,6 +60,8 @@ public class TrackerService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId){
         Log.d("TRACKERSERVICE", "Service Started..");
+        CustomSettingsDbHandler.setIsServiceRunningFlag(getApplicationContext(), true);
+
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         listener = new MyLocationListener();
         if(CheckLocationPermissions()) {
@@ -163,7 +167,8 @@ public class TrackerService extends Service {
             locationManager.removeUpdates(listener);
         }catch (SecurityException e){
         }
-        StaticHelper.IsServiceRunning = false;
+
+        CustomSettingsDbHandler.setIsServiceRunningFlag(getApplicationContext(), false);
     }
 
     public class MyLocationListener implements LocationListener

@@ -19,3 +19,4 @@ public class StaticHelper {
 
     public static List<LocationPointModel> pointsRecorded = new ArrayList<>();
 }
+

@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.ve.tracker.tracker.DBClasses.DbHandler.CustomSettingsDbHandler;
 import com.ve.tracker.tracker.Helper.StaticHelper;
 import com.ve.tracker.tracker.Models.LocationPointModel;
 import com.ve.tracker.tracker.Service.TrackerService;
@@ -52,6 +53,13 @@ public class MainActivity extends AppCompatActivity {
         if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
             buildAlertMessageNoGps();
         }
+
+        if(CustomSettingsDbHandler.getIsServiceRunning(getApplicationContext())){
+            serviceControl.setText("STOP");
+        }else{
+            serviceControl.setText("BEGIN");
+        }
+
     }
 
     private void buildAlertMessageNoGps() {
@@ -110,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void StartService(View view) {
         Intent intent = new Intent(this, TrackerService.class);
-        if(!StaticHelper.IsServiceRunning) {
+        if(!CustomSettingsDbHandler.getIsServiceRunning(getApplicationContext())) {
             Log.d("TRACKERSERVICE", "Service is not runnning.");
             startService(intent);
             serviceControl.setText("Stop");
@@ -119,6 +127,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d("TRACKERSERVICE", "Service is runnning.");
             stopService(intent);
             serviceControl.setText("Begin");
+            CustomSettingsDbHandler.setIsServiceRunningFlag(getApplicationContext(), false);
         }
     }
 

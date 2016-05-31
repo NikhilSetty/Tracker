@@ -21,9 +21,11 @@ public class TrackerProvider extends ContentProvider {
     private static final String AUTH = "com.ve.tracker.tracker.TrackerProvide";
     public final Uri USER_URI = Uri.parse("content://"+AUTH+"/"+ DbTableStrings.TABLE_NAME_USER_MODEL);
     public final Uri LOCATION_URI = Uri.parse("content://"+AUTH+"/"+ DbTableStrings.TABLE_NAME_LOCATION_MODEL);
+    public final Uri CUSTOM_SETTINGS_URI = Uri.parse("content://"+AUTH+"/"+ DbTableStrings.TABLE_NAME_CUSTOM_SETTINGS);
 
     final static int USERS_MATCH = 1;
     final static int LOCATION_MATCH = 2;
+    final static int CUSTOM_SETTINGS_MATCH = 3;
 
     SQLiteDatabase db;
     DbHelper dbHelper;
@@ -33,6 +35,7 @@ public class TrackerProvider extends ContentProvider {
         urimatcher = new UriMatcher(UriMatcher.NO_MATCH);
         urimatcher.addURI(AUTH,DbTableStrings.TABLE_NAME_USER_MODEL,USERS_MATCH);
         urimatcher.addURI(AUTH,DbTableStrings.TABLE_NAME_LOCATION_MODEL,LOCATION_MATCH);
+        urimatcher.addURI(AUTH,DbTableStrings.TABLE_NAME_CUSTOM_SETTINGS,CUSTOM_SETTINGS_MATCH);
     }
 
     @Override
@@ -53,7 +56,9 @@ public class TrackerProvider extends ContentProvider {
                 break;
             case LOCATION_MATCH:
                 cursor = db.query(DbTableStrings.TABLE_NAME_LOCATION_MODEL,projection,selection,selectionArgs,null,null,sortOrder);
-
+                break;
+            case CUSTOM_SETTINGS_MATCH:
+                cursor = db.query(DbTableStrings.TABLE_NAME_CUSTOM_SETTINGS,projection,selection,selectionArgs,null,null,sortOrder);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI: " + uri);
@@ -82,6 +87,8 @@ public class TrackerProvider extends ContentProvider {
             case LOCATION_MATCH:
                 db.insert(DbTableStrings.TABLE_NAME_LOCATION_MODEL,null,values);
                 break;
+            case CUSTOM_SETTINGS_MATCH:
+                db.insert(DbTableStrings.TABLE_NAME_CUSTOM_SETTINGS, null, values);
             default:
                 throw new IllegalArgumentException("Unknown URI: " + uri);
         }

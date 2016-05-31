@@ -15,6 +15,7 @@ public class DbHelper extends SQLiteOpenHelper {
         Log.v("creating " , "DB");
         db.execSQL(Schema.CREATE_TABLE_USER);
         db.execSQL(Schema.CREATE_TABLE_LOCATION);
+        db.execSQL(Schema.CREATE_TABLE_CUSTOM_SETTINGS);
         Log.v("created " , "DB");
     }
 
